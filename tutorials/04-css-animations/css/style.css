@@ -1,0 +1,100 @@
+/*
+CSS RESETS:
+ Border box reset:
+https://www.paulirish.com/2012/box-sizing-border-box-ftw/
+ 62.5% Fix: https: //www.aleksandrhovhannisyan.com/blog/62-5-percent-font-size-trick/
+*/
+
+
+html {
+    box-sizing: border-box;
+    font-size: 100%;
+ }
+ 
+ 
+ *,
+ *:before,
+ *:after {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+ }
+ 
+ 
+ html,
+ body {
+    height: 100%;
+ }
+ 
+ 
+ body {
+     font-size: 1.6rem;
+    /* font-size 1.6rem is now the same as 16px */
+    line-height: 1.6;
+    background: rgb(228,231,109);
+    background: linear-gradient(90deg, rgba(228,231,109,1) 0%, rgba(0,212,255,1) 100%);
+    animation: ColorBackground 2s infinite alternate;
+ }
+ 
+ @keyframes ColorBackground {
+    0% {
+        background: linear-gradient(90deg, rgba(228,231,109,1) 0%, rgba(0,212,255,1) 100%);
+    }
+    100% {
+        background: linear-gradient(90deg, rgba(0,212,255,1) 0%, rgba(228,231,109,1) 100%);
+    }
+ }
+ 
+ 
+ @keyframes stretching {
+    0% {
+      width: 100px;
+    }
+    100% {
+      width: fill;
+    }
+  }
+
+  @keyframes rotate {
+    50% {
+    }
+    100% {
+  
+    }
+    }
+    
+    
+  .button {
+    animation: 5s infinite alternate stretching;
+    animation-timing-function: steps(4, jump-start);
+    transform: rotate(90deg);
+    transform: rotate3d(1, 2, 3, 40deg);
+    letter-spacing: .2rem;
+    display: inline-block;
+    width: 180%;
+    background-color:rgb(228,231,109);
+
+  }  
+  
+ 
+  /* .button {
+    animation-name: stretching;
+    animation-direction: alternate;
+    transform: rotate(90deg);
+    animation-duration: 5s;
+    letter-spacing: .2rem;
+    animation-iteration-count: infinite;
+    display: inline-block;
+    width: 180%;
+    background-color:aqua;
+  } */
+  
+  .button:hover {
+    background-color: rgba(0,212,255);
+}
+
+  .header {
+        margin-top: 500px;
+
+  }
+
