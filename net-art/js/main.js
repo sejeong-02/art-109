@@ -58,6 +58,9 @@ document.querySelector("#image-32").addEventListener("click", function(){
 document.querySelector("#image-36").addEventListener("click", function(){
     alert("last one!!")
 })
+document.querySelector("#image-37").addEventListener("click", function(){
+    alert("the end!")
+})
 
 let divsNodes = document.querySelectorAll(".image-div.hidden");
 let divs = Array.from(divsNodes);
@@ -71,17 +74,15 @@ for (i = 0; i < divs.length; i++) {
     });
 }
 
-document.querySelector("#image-36").addEventListener("click", function(){
-    alert("the end!")
-})
+
 
 document.addEventListener("DOMContentLoaded", () => {
-    let images = document.querySelectorAll(".image-div.hidden");
+    let images = document.querySelectorAll(".image-div.hidden.sticker");
 
 images.forEach((img, index) => {
     // Random positioning inside viewport
-    img.style.left = `${Math.random() * (window.innerWidth + 280)}px`;
-    img.style.top = `${Math.random() * (window.innerHeight - 100)}px`;
+    img.style.left = `${Math.random() * (window.innerWidth - 600)}px`;
+    img.style.top = `${Math.random() * (window.innerHeight - 600)}px`;
 })
 
 })
