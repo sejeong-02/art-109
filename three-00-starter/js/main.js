@@ -12,29 +12,32 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // global variables 
 let scene, camera, renderer, cube, torus;
+let sceneContainer = document.querySelector("#scene-container")
 
+// set up scene, camera, + renderer
 function init () {
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(100, sceneContainer.clientWidth, sceneContainer.clientHeight, 0.1, 1000);
     
     renderer = new THREE.WebGLRenderer({antialias: true});
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+    renderer.setSize(sceneContainer.clientWidth, sceneContainer.clientHeight);
+    sceneContainer.appendChild(renderer.domElement);
     
+
     // add dirctional light
     const light = new THREE.DirectionalLight(0xffffff, 3);
     light.position.set (1,1,5);
     scene.add(light);
 
-    const helper = new THREE.DirectionalLightHelper(light,5);
-    scene.add(helper);    
+    // const helper = new THREE.DirectionalLightHelper(light,5);
+    // scene.add(helper);    
       // add BLUE dirctional light
       const lightLeft = new THREE.DirectionalLight(0xf70ff, 3);
       lightLeft.position.set (-1,1,5);
       scene.add(lightLeft);
   
-      const helperLeft = new THREE.DirectionalLightHelper(lightLeft,5);
-      scene.add(helperLeft);    
+      // const helperLeft = new THREE.DirectionalLightHelper(lightLeft,5);
+      // scene.add(helperLeft);    
     
     // ~~~~~~~~~~~~~~~~ Initiate add-ons ~~~~~~~~~~~~~~~~
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -84,9 +87,9 @@ function animate() {
 }
 
 function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.aspect = sceneContainer.clientWidth / sceneContainer.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(sceneContainer.clientWidth,  sceneContainer.clientHeight);
 }
 
 window.addEventListener('resize', onWindowResize, false);
