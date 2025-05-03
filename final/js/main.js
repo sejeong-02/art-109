@@ -20,10 +20,9 @@ import { GLTFLoader } from 'https://unpkg.com/three@0.162.0/examples/jsm/loaders
 
 
 // ~~~~~~~~~~~~~~~~ Declare Global Variables~~~~~~~~~~~~~~~~
-let scene, camera, renderer, mixer, mixer2, sori, nana, kitchen, fish, carrot, musicplayer, lightLeft, lightRight;
+let scene, camera, renderer, mixer, mixer2, sori, nana, kitchen, fish, carrot, musicplayer, lightLeft, lightRight, mainlight;
 // animation variables
 let actionSit, actionHead, actionSit2, actionHead2;
-
 let fishVisible = false;
 let carrotVisible = false;
 let musicplayerVisible = false;
@@ -51,11 +50,16 @@ function init() {
     scene.background = new THREE.Color(0xFFFFFF);
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-   camera.position.set (6,2,-4);
-//    camera.position.set (2,1,4);
+    camera.position.set (4.6,0,-0.5);
+
+   
 
 
 
+
+//   
+
+ 
 
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true});
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -65,22 +69,28 @@ function init() {
     // ~~~~~~ Add Lights ~~~~~~
     // Add helpers to debug the lights' position - COMMENT OUT WHEN DONE placing the light! https://threejs.org/docs/#api/en/helpers/DirectionalLightHelper
 
-    lightRight = new THREE.DirectionalLight(0xe69a78, 3);
+    lightRight = new THREE.DirectionalLight(0xe69a78, 4);
     lightRight.position.set(3, 4, 5);
     scene.add(lightRight);
     
-    // const helperRight = new THREE.DirectionalLightHelper(lightRight, 5);
-    // scene.add(helperRight);
+    const helperRight = new THREE.DirectionalLightHelper(lightRight, 5);
+    scene.add(helperRight);
     
-    lightLeft = new THREE.DirectionalLight(0xd6e678, 3);
-    lightLeft.position.set(-3, 4, 5);
+    lightLeft = new THREE.SpotLight(0xe6db78, 100);
+    lightLeft.position.set(9, 3, 4)
     scene.add(lightLeft);
-
     
-    
-    // const helperLeft = new THREE.DirectionalLightHelper(lightLeft, 5);
-    // scene.add(helperLeft);
+    const helperLeft = new THREE.SpotLightHelper(lightLeft, 5);
+    scene.add(helperLeft);
 
+
+
+    mainlight = new THREE.PointLight(0xe69a78, 200);
+    mainlight.position.set(3, 4, 20);
+    scene.add(mainlight);
+    
+    const helperMain = new THREE.PointLightHelper(mainlight, 5);
+    scene.add(helperMain);
 
 
 
@@ -283,6 +293,31 @@ document.getElementById('lighting').addEventListener('click', () => {
 });
 
 
+
+let cam1 = new THREE.Vector3(4.6,0,-0.5);
+let cam2 = new THREE.Vector3(6, 1, -4);
+let cam3 = new THREE.Vector3(6,2,4);
+
+
+let currentCam = 0;
+
+document.getElementById('camera').addEventListener('click', () => {
+    currentCam = (currentCam + 1) % 3; // cycle 0 → 1 → 2 → 0
+
+    switch (currentCam) {
+        case 0:
+            camera.position.copy(cam1);
+            break;
+        case 1:
+            camera.position.copy(cam2);
+            break;
+        case 2:
+            camera.position.copy(cam3);
+            break;
+    }
+
+    camera.lookAt(scene.position); // Optional: make sure it's pointing at center
+});
 
 const audio = document.getElementById('song');
 let isPlaying = false;
