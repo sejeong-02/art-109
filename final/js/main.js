@@ -73,24 +73,31 @@ function init() {
     lightRight.position.set(3, 4, 5);
     scene.add(lightRight);
     
-    const helperRight = new THREE.DirectionalLightHelper(lightRight, 5);
-    scene.add(helperRight);
+    // const helperRight = new THREE.DirectionalLightHelper(lightRight, 5);
+    // scene.add(helperRight);
     
-    lightLeft = new THREE.SpotLight(0xe6db78, 100);
-    lightLeft.position.set(9, 3, 4)
+    lightLeft = new THREE.SpotLight(0xe6db78, 200);
+    lightLeft.position.set(12, 3, 4)
     scene.add(lightLeft);
     
-    const helperLeft = new THREE.SpotLightHelper(lightLeft, 5);
-    scene.add(helperLeft);
+    // const helperLeft = new THREE.SpotLightHelper(lightLeft, 5);
+    // scene.add(helperLeft);
 
 
 
-    mainlight = new THREE.PointLight(0xe69a78, 200);
+    mainlight = new THREE.PointLight(0xe69a78, 50);
     mainlight.position.set(3, 4, 20);
     scene.add(mainlight);
     
-    const helperMain = new THREE.PointLightHelper(mainlight, 5);
-    scene.add(helperMain);
+    // const helperMain = new THREE.PointLightHelper(mainlight, 5);
+    // scene.add(helperMain);
+
+    mainlight = new THREE.PointLight(0xe69a78, 10);
+    mainlight.position.set(2, 2, 0);
+    scene.add(mainlight);
+    
+    // const helperMain1 = new THREE.PointLightHelper(mainlight, 5);
+    // scene.add(helperMain1);
 
 
 
@@ -98,6 +105,11 @@ function init() {
     // ~~~~~~ Initiate add-ons ~~~~~~
 
     const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = true;
+    controls.maxPolarAngle = Math.PI / 1;
+    controls.minPolarAngle = Math.PI / 4;
     const loader = new GLTFLoader(); // to load 3d models
 
 
@@ -180,6 +192,7 @@ function init() {
     
      }); 
      
+     // // load nana model
      loader.load('assets/nana.gltf', function (gltf) {
         nana = gltf.scene;
         scene.add(nana);
@@ -208,10 +221,6 @@ function init() {
    
    
     // ~~~~~~Position Camera~~~~~~
-    
-
-
-
     
  
 
@@ -248,9 +257,8 @@ document.querySelector("#music").addEventListener("click", () => {
 // (similar to draw loop in p5.js, updates every frame)
 const clock = new THREE.Clock();
 function animate() {
-    requestAnimationFrame(animate); // start loop by with frame update
 
-    // →→→→→→ add your animation here ↓↓↓↓
+    requestAnimationFrame(animate); // start loop by with frame update
 
     const delta = clock.getDelta();
     if (mixer) mixer.update(delta);
@@ -272,18 +280,18 @@ document.getElementById('fish').addEventListener('click', () => {
         fish.visible = fishVisible;
     }
 });
+// carrot on/off
 document.getElementById('carrot').addEventListener('click', () => {
     if (carrot) {
         carrotVisible = !carrotVisible;
         carrot.visible = carrotVisible;
     }
 });
+// bunny on/off
 document.getElementById('bunny').addEventListener('click', () => {
     if (nana) {
         nanaVisible = !nanaVisible;
         nana.visible = nanaVisible;
-
-       
     }
 });
 // light on/off
@@ -293,16 +301,16 @@ document.getElementById('lighting').addEventListener('click', () => {
 });
 
 
-
+// diff camera angles
 let cam1 = new THREE.Vector3(4.6,0,-0.5);
-let cam2 = new THREE.Vector3(6, 1, -4);
-let cam3 = new THREE.Vector3(6,2,4);
+let cam2 = new THREE.Vector3(4.2, 2, -3);
+let cam3 = new THREE.Vector3(0,2,-5);
 
 
 let currentCam = 0;
 
 document.getElementById('camera').addEventListener('click', () => {
-    currentCam = (currentCam + 1) % 3; // cycle 0 → 1 → 2 → 0
+    currentCam = (currentCam + 1) % 3; //
 
     switch (currentCam) {
         case 0:
@@ -319,6 +327,7 @@ document.getElementById('camera').addEventListener('click', () => {
     camera.lookAt(scene.position); // Optional: make sure it's pointing at center
 });
 
+// music on/off
 const audio = document.getElementById('song');
 let isPlaying = false;
 
@@ -345,12 +354,7 @@ document.querySelectorAll('button').forEach(btn => {
     });
 });
 
-function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
 
-}
 
 window.addEventListener('DOMContentLoaded', () => {
     const colorSelect = document.getElementById('color-select');
@@ -364,6 +368,39 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// clock+date
+function updateClock() {
+    const now = new Date();
+
+    // Format time
+    let hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12; // convert 0 to 12-hour format
+    const timeString = `${hours.toString().padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+
+    // Format date
+    const options = { month: 'short', day: '2-digit', year: 'numeric' };
+    const dateString = now.toLocaleDateString('en-US', options);
+
+    // Update DOM
+    document.getElementById('clock-time').textContent = timeString;
+    document.getElementById('clock-date').textContent = dateString;
+}
+
+
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+}
+
+setInterval(updateClock, 1000);
+updateClock();
 
 window.addEventListener('resize', onWindowResize, false);
 
