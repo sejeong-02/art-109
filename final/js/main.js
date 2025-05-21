@@ -1,15 +1,3 @@
-/* 
-glTF import:
-- glTF loader imported + enabled
--Global variable added to store cat gltf
--Two directional lights added to view glTF
-- Added HELPERS to debug light position (disable after you place them)
--glTF imported from blender (not it is an *embedded* .glTF file, not .glb)
--Changed material on ball from BASIC to STANDARD so that the geometry catches light
-*/
-
-
-//~~~~~~~Import Three.js (also linked to as an import map in the HTML)~~~~~~
 import * as THREE from 'three';
 
 
@@ -19,14 +7,15 @@ import { GLTFLoader } from 'https://unpkg.com/three@0.162.0/examples/jsm/loaders
 
 
 
-// ~~~~~~~~~~~~~~~~ Declare Global Variables~~~~~~~~~~~~~~~~
-let scene, camera, renderer, mixer, mixer2, sori, nana, kitchen, fish, carrot, musicplayer, lightLeft, lightRight, mainlight;
+// ~~~~~~~~~~~~~~~~Global Variables~~~~~~~~~~~~~~~~
+let scene, camera, renderer, mixer, mixer2, mixer3, sori, nana, miro,  kitchen, fish, carrot, musicplayer, lightLeft, lightRight, mainlight;
 // animation variables
-let actionSit, actionHead, actionSit2, actionHead2;
+let actionSit, actionHead, actionSit2, actionHead2, actionMiro;
 let fishVisible = false;
 let carrotVisible = false;
 let musicplayerVisible = false;
 let nanaVisible = false;
+let miroVisible = false;
 let lightsOn = true;
 
 const clickSound = document.getElementById('click-sound');
@@ -38,9 +27,6 @@ function playClickSound() {
     }
 }
 
-// animation variables
-let actionNod;
-
 // ~~~~~~~~~~~~~~~~ Initialize Scene in init() ~~~~~~~~~~~~~~~~
 function init() {
 
@@ -50,8 +36,8 @@ function init() {
     scene.background = new THREE.Color(0xFFFFFF);
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-    camera.position.set (4.6,0,-0.5);
 
+    camera.position.set (4.6,0,-0.5);
    
 
 
@@ -107,7 +93,7 @@ function init() {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableZoom = false;
     controls.enablePan = false;
-    controls.enableRotate = true;
+    controls.enableRotate = false;
     controls.maxPolarAngle = Math.PI / 1;
     controls.minPolarAngle = Math.PI / 4;
     const loader = new GLTFLoader(); // to load 3d models
@@ -169,8 +155,6 @@ function init() {
         sori.scale.set(1, 1, 1); // scale your model
         sori.position.y = -3; // set initial position
 
-
-
           // animation
           mixer = new THREE.AnimationMixer(sori);
           const clips = gltf.animations;
@@ -218,17 +202,31 @@ function init() {
         }
     });
 
-   
-   
-    // ~~~~~~Position Camera~~~~~~
+    loader.load('assets/miro.gltf', function (gltf) {
+        // Add model to scene
+        miro = gltf.scene;
+        scene.add(miro);
+        miro.scale.set(1, 1, 1);
+        miro.position.y = -3;
+        miro.visible = miroVisible;
     
- 
+        // Setup animation
+        mixer3 = new THREE.AnimationMixer(miro);
+        const clipMiro = THREE.AnimationClip.findByName(gltf.animations, 'Miro');
+    
+        if (clipMiro) {
+            actionMiro = mixer3.clipAction(clipMiro);
+            actionMiro.setLoop(THREE.LoopRepeat); // or THREE.LoopOnce
+            actionMiro.play();
+        }
+    });
+
 
 }
 
 // event listener
 
-// cat
+// head animation
 let isNodding = false;
 
 document.querySelector("#music").addEventListener("click", () => {
@@ -254,7 +252,6 @@ document.querySelector("#music").addEventListener("click", () => {
 
 
 // ~~~~~~~~~~~~~~~~ Animation Loop ~~~~~~~~~~~~~~~~
-// (similar to draw loop in p5.js, updates every frame)
 const clock = new THREE.Clock();
 function animate() {
 
@@ -263,12 +260,8 @@ function animate() {
     const delta = clock.getDelta();
     if (mixer) mixer.update(delta);
     if (mixer2) mixer2.update(delta);
-   
+    if (mixer3) mixer3.update(delta);
 
-    
-    
-
-    // always end animation loop with renderer
     renderer.render(scene, camera);
     
 }
@@ -294,23 +287,29 @@ document.getElementById('bunny').addEventListener('click', () => {
         nana.visible = nanaVisible;
     }
 });
+// puppy on/off
+document.getElementById('puppy').addEventListener('click', () => {
+    if (miro) {
+        miroVisible = !miroVisible;
+        miro.visible = miroVisible;
+    }
+});
 // light on/off
 document.getElementById('lighting').addEventListener('click', () => {
     lightsOn = !lightsOn;
     if (lightLeft) lightLeft.visible = lightsOn;
 });
 
-
 // diff camera angles
 let cam1 = new THREE.Vector3(4.6,0,-0.5);
-let cam2 = new THREE.Vector3(4.2, 2, -3);
-let cam3 = new THREE.Vector3(0,2,-5);
-
+let cam2 = new THREE.Vector3(6, 1.5, -4);
+let cam3 = new THREE.Vector3(0,0,5);
+let cam4 = new THREE.Vector3(3,0.5,23.2);
 
 let currentCam = 0;
 
 document.getElementById('camera').addEventListener('click', () => {
-    currentCam = (currentCam + 1) % 3; //
+    currentCam = (currentCam + 1) % 4; //
 
     switch (currentCam) {
         case 0:
@@ -322,9 +321,12 @@ document.getElementById('camera').addEventListener('click', () => {
         case 2:
             camera.position.copy(cam3);
             break;
+        case 3:
+            camera.position.copy(cam4);
+            break;
     }
 
-    camera.lookAt(scene.position); // Optional: make sure it's pointing at center
+    camera.lookAt(scene.position); 
 });
 
 // music on/off
@@ -353,7 +355,6 @@ document.querySelectorAll('button').forEach(btn => {
         playClickSound();
     });
 });
-
 
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -390,8 +391,6 @@ function updateClock() {
     document.getElementById('clock-date').textContent = dateString;
 }
 
-
-
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -406,4 +405,3 @@ window.addEventListener('resize', onWindowResize, false);
 
 init(); // execute initialize function
 animate(); // execute animation function
-
